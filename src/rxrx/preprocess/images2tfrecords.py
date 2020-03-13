@@ -104,7 +104,7 @@ def _dataset_rs_dict(seed):
     rs = np.random.RandomState(seed)
     high = 2**32 - 1
     return {
-        ds: np.random.RandomState(rs.randint(high))
+        ds: np.random.RandomState(rs.randint(high, dtype=np.int64))  # !!! dtype=int64
         for ds in sorted(VALID_DATASETS)
     }
 

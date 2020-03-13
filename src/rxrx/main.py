@@ -244,12 +244,21 @@ def resnet_model_fn(features, labels, mode, params, n_classes, num_train_images,
 
         eval_metrics = (metric_fn, [labels, logits])
 
+    # !!!
+    '''
     return tf.contrib.tpu.TPUEstimatorSpec(
         mode=mode,
         loss=loss,
         train_op=train_op,
         host_call=host_call,
         eval_metrics=eval_metrics)
+    '''
+    # !!!
+    return tf.estimator.EstimatorSpec(
+        mode=mode,
+        loss=loss,
+        train_op=train_op)
+
 
 def main(use_tpu,
          tpu,
@@ -289,12 +298,16 @@ def main(use_tpu,
     log_step_count_steps = steps_per_epoch * log_step_count_epochs
 
 
+    # !!!
+    '''
     tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
         tpu if (tpu or use_tpu) else '', zone=tpu_zone, project=gcp_project)
+    '''
 
-
+    # !!!
+    '''
     config = tf.contrib.tpu.RunConfig(
-        cluster=tpu_cluster_resolver,
+        cluster=None, #  tpu_cluster_resolver,
         model_dir=model_dir,
         save_summary_steps=iterations_per_loop,
         save_checkpoints_steps=iterations_per_loop,
@@ -304,6 +317,16 @@ def main(use_tpu,
             num_shards=num_cores,
             per_host_input_for_training=tf.contrib.tpu.InputPipelineConfig.
             PER_HOST_V2))  # pylint: disable=line-too-long
+    '''
+    # !!!
+    config_proto = tf.ConfigProto(
+        allow_soft_placement=True, log_device_placement=True,
+        gpu_options={"per_process_gpu_memory_fraction": 0.5, "allow_growth": True})
+
+    config = tf.estimator.RunConfig(
+        session_config=config_proto,
+        model_dir=model_dir,
+        save_checkpoints_steps=iterations_per_loop)
 
     model_fn = functools.partial(
         resnet_model_fn,
@@ -323,12 +346,18 @@ def main(use_tpu,
         resnet_depth=resnet_depth)
 
 
+    # !!!
+    '''
     resnet_classifier = tf.contrib.tpu.TPUEstimator(
         use_tpu=use_tpu,
         model_fn=model_fn,
         config=config,
         train_batch_size=train_batch_size,
         export_to_tpu=False)
+    '''
+    resnet_classifier = tf.estimator.Estimator(
+        model_fn=model_fn, config=config, params={"batch_size": train_batch_size})
+
 
 
     use_bfloat16 = (tf_precision == 'bfloat16')

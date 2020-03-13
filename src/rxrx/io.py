@@ -10,7 +10,8 @@ import pandas as pd
 
 import tensorflow as tf
 
-DEFAULT_BASE_PATH = 'gs://rxrx1-us-central1'
+# !!!
+DEFAULT_BASE_PATH = 'D:\\_peng\\recursion-cellular-image-classification-new'  #  'gs://rxrx1-us-central1'
 DEFAULT_METADATA_BASE_PATH = os.path.join(DEFAULT_BASE_PATH, 'metadata')
 DEFAULT_IMAGES_BASE_PATH = os.path.join(DEFAULT_BASE_PATH, 'images')
 DEFAULT_CHANNELS = (1, 2, 3, 4, 5, 6)
