@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>PI - Team B, CSCI991 Project Spring 2019, UOW</title>
+
+	<link rel="shortcut icon" href="favicon.png">
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+
+    <script src="https://demos.jquerymobile.com/1.4.5/js/jquery.js"></script>
+	<script src="https://demos.jquerymobile.com/1.4.5/_assets/js/index.js"></script>
+	<script src="https://demos.jquerymobile.com/1.4.5/js/jquery.mobile-1.4.5.min.js"></script>
+    
+    <script src="js/validate.js"></script>
+    <script src="js/sign_in.js"></script>
+</head>
+<body>
+    
+<div data-role="page" class="jqm-demos jqm-home">
+
+    <div data-role="header" class="jqm-header">
+        <h2><a tabindex="-1" href="#" data-ajax="false"><img src="img/logo.jpg" alt="logo"></a></h2>
+        <a href="#" class="jqm-navmenu-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-bars ui-nodisc-icon ui-alt-icon ui-btn-left">Menu</a>
+    </div><!-- /header -->
+
+    <div data-role="panel" class="jqm-navmenu-panel" data-position="left" data-display="overlay" data-theme="a">
+        <ul class="jqm-list ui-alt-icon ui-nodisc-icon">
+
+        <li data-filtertext="form button widget input button submit reset">
+            <a href="open_about.html" data-ajax="false">About</a>
+        </li>
+     </ul>
+    </div><!-- /panel -->
+
+    <div data-role="main" class="" style="width: 280px; margin:0 auto;"> <!-- <div data-role="content" class="content" style="width: 280px; margin:0 auto;"> -->
+        <form data-infoColor="#ff8027" data-ajax="false" action="" method="post" id="sign-in-form">
+            <label id='error-info' style='color:#ff8027;display:none;'></label>
+
+                <label id='email-info' style='display:none;'></label>
+                <input class="auto-validate" data-allowBlank="false" data-blankText="input your email" tabindex="1" regex="/\w+[@]{1}\w+[.]\w+/" regexText="invalid email" type="text" name="email" id="email" value="" placeholder="email" />
+
+                <label id='password-info' style='display:none;'></label>
+                <input class="auto-validate" data-allowBlank="false" data-blankText="input your password" tabindex="2" type="password" name="password" id="password" placeholder="password" value=""/>
+
+                <input tabindex="3" type="checkbox" name="remember-me" id="remember-me" data-mini="false" />
+                <label for="remember-me">Keep me signed in</label>
+
+            <a href="file_list.html" data-role="button" id="sign-in-button" data-ajax="false" class="" data-theme="b">Sign in</a>
+
+            <br/>
+            <fieldset data-role="controlgroup">
+                <span>New user?</span>
+                <a tabindex="6" href="sign_up.html" data-ajax="false" id="toregist" data-theme="b">Sign up</a>
+            </fieldset>
+        </form>
+    </div>
+
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="jqm-footer">
+        <p>PI, human cellular biology, novel treatments for disease.</p>
+        <p>Copyright 2020</p>
+    </div><!-- /footer -->
+</div>
+
+</body>
+</html>

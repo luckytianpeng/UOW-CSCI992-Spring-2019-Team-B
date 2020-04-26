@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>submit files</title>
+	<link rel="shortcut icon" href="favicon.png">
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+
+    <link rel="stylesheet" href="http://demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css">
+
+	<script src="https://demos.jquerymobile.com/1.4.5/js/jquery.js"></script>
+	<script src="https://demos.jquerymobile.com/1.4.5/_assets/js/index.js"></script>
+	<script src="https://demos.jquerymobile.com/1.4.5/js/jquery.mobile-1.4.5.min.js"></script>
+
+    <script src="js/validate.js"></script>
+    <script src="js/submit_file.js"></script>
+</head>
+<body>
+    
+<div data-role="page" class="jqm-demos">
+
+    <div data-role="header" class="jqm-header">
+        <h2><a tabindex="-1" href="#" data-ajax="false"><img src="img/logo.jpg" alt="logo"></a></h2>
+        <a href="#" class="jqm-navmenu-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-bars ui-nodisc-icon ui-alt-icon ui-btn-left">Menu</a>
+    </div><!-- /header -->
+
+    <div data-role="panel" class="jqm-navmenu-panel" data-position="left" data-display="overlay" data-theme="a">
+        <ul class="jqm-list ui-alt-icon ui-nodisc-icon">
+            <li data-filtertext="demos homepage" data-icon="back">
+                <a href="index.html" data-ajax="false" data-rel="back">back</a>
+            </li>
+            <li data-filtertext="form button widget input button submit reset">
+                <a href="open_about.html" data-ajax="false">About</a>
+            </li>
+            <li data-filtertext="demos homepage" data-icon="home">
+                <a href="logout" data-ajax="false">Logout</a>
+            </li>
+        </ul>
+    </div><!-- /panel -->
+
+    <div data-role="main" class="ui-content jqm-content"> <!-- <div data-role="content" class="content" style="width: 280px; margin:0 auto;"> -->
+        <form data-infoColor="#ff8027" data-ajax="false" action="upload" enctype="multipart/form-data" method="post" id="submit-form">
+
+            <label id='error-info' style='color:#ff8027;display:none;'></label>
+
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <legend>Cell Type:</legend>
+                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2a" value="off">
+                <label for="radio-choice-h-2a">HEPG2</label>
+                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2b" value="off">
+                <label for="radio-choice-h-2b">HVUEC</label>
+                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2c" value="off">
+                <label for="radio-choice-h-2c">RPE</label>
+                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2d" value="off">
+                <label for="radio-choice-h-2d">U2OS</label>
+            </fieldset>
+
+            <label for="experiment-no">Experiment number:</label>
+            <input type="number" data-clear-btn="false" name="number-1" id="experiment-no" value="1">
+
+            <label id='file-info' style=''>Images: (6 channels * 2 sites = 12 imgs)</label>
+            <!-- <input tabindex="3" type="file" class="auto-validate" data-allowBlank="false" data-blankText="choose files" name="file" id="file" accept="image/*" multiple />-->
+            <input type="file" id="file" accept="image/*" multiple>
+            <div id="preview"></div>
+            <script>
+                var oPreview = document.getElementById("preview");
+                var oUpload = document.getElementById("file");
+                oUpload.onchange = function(){
+                    oPreview.innerHTML= "";
+
+                    var fileList = oUpload.files;
+                    for (var i = 0; i < fileList.length; ++ i) {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileList[i]);
+                        reader.onload = function(e, name=fileList[i]) {
+                            // oPreview.innerHTML = "![]("+this.result+")"; // this.result : URL
+                            console.log(e);
+                            console.log(name);
+                            oPreview.innerHTML +=
+                                // "<label>" + this.name + "</label>"
+                                "<img style='width:20%; height:20%; margin:2px;' src='" +
+                                this.result +
+                                "'/>";
+                        }
+                    }
+                }
+            </script>
+
+            <br/>
+
+            <button tabindex="3" type="submit" data-role="button" id="submit-file-button" data-theme="c">Submit</button>
+        </form>
+
+    </div>
+
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="jqm-footer">
+        <p>PI, human cellular biology, novel treatments for disease.</p>
+        <p>Copyright 2020</p>
+    </div><!-- /footer -->
+</div>
+
+</body>
+</html>

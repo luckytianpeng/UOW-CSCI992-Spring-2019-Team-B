@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PI - Sign Up</title>
+    <link rel="shortcut icon" href="favicon.png">
+    <link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+
+    <script src="https://demos.jquerymobile.com/1.4.5/js/jquery.js"></script>
+    <script src="https://demos.jquerymobile.com/1.4.5/_assets/js/index.js"></script>
+    <script src="https://demos.jquerymobile.com/1.4.5/js/jquery.mobile-1.4.5.min.js"></script>
+    
+    <script src="js/validate.js"></script>
+    <script src="js/sign_up.js"></script>
+</head>
+<body>
+<div data-role="page" class="jqm-demos jqm-home">
+
+    <div data-role="header" class="jqm-header">
+        <h2><a tabindex="-1" href="index.html" data-ajax="false"><img src="img/logo.jpg" alt="jQuery Mobile"></a></h2>
+        <a href="#" class="jqm-navmenu-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-bars ui-nodisc-icon ui-alt-icon ui-btn-left">Menu</a>
+    </div><!-- /header -->
+
+    <div role="main" class="ui-content jqm-content">
+
+        <form action="signup" method="post" id="signup-form" data-infoColor="#ff8027">
+            
+            <label id='email-info' style='display:none;'></label>
+            <input tabindex="1" type="text" placeholder="email" data-clear-btn="true" name="email" id="email" value="" class="auto-validate" data-allowBlank="false" data-blankText="input your email" tabindex="1" regex="/\w+[@]{1}\w+[.]\w+/" regexText="invalid email format"/>
+            
+             <label id='password-info' style='display:none;'></label>
+            <input tabindex="2" type="password" placeholder="password" data-clear-btn="true" name="password" id="password" value="" class="auto-validate" data-allowBlank="false" data-blankText="input your password"/>
+            
+            <label id='repassword-info' style='display:none;'></label>
+            <input tabindex="3" type="password" placeholder="repeat password" data-clear-btn="true" name="repassword" id="repassword" value="" class="auto-validate" data-allowBlank="false" data-blankText="repeat your password" confirmTo='password' vtypeText='you input different passwrods'/>
+
+            <fieldset data-role="controlgroup">
+                <button type="button" data-role="button" id="sign-up-button" name="sign-up-button" data-theme="b">Sign Up</button>
+            </fieldset>
+        </form>
+
+        <div data-dismissible="false" data-transition="slideup" data-role="popup" id="info-dialog" data-overlay-theme="b" data-theme="a" class="ui-corner-all" style="max-width:340px; min-width:240px;" >
+
+            <div style="padding:10px 20px;">
+                <h3 id="info-title">Successful!</h3>
+
+                <p id="info">The register code has been sent to your email box.</p>
+
+                <button data-ajax="false" id="ok-button" type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b">OK</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <div data-role="panel" class="jqm-navmenu-panel" data-position="left" data-display="overlay" data-theme="a">
+        <ul class="jqm-list ui-alt-icon ui-nodisc-icon">
+        <li data-filtertext="demos homepage" data-icon="home">
+            <a href="index.html" data-ajax="false">Homepage</a>
+        </li>
+        <li data-filtertext="form button widget input button submit reset">
+            <a href="open_about.html" data-ajax="false">About</a>
+        </li>
+     </ul>
+    </div><!-- /panel -->
+
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="jqm-footer">
+        <p>PI, human cellular biology, novel treatments for disease.</p>
+        <p>Copyright 2020</p>
+    </div>
+</div>
+</body>
+</html>

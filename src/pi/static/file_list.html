@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>file list</title>
+	<link rel="shortcut icon" href="favicon.png">
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+
+    <link rel="stylesheet" href="http://demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css">
+
+	<script src="https://demos.jquerymobile.com/1.4.5/js/jquery.js"></script>
+	<script src="https://demos.jquerymobile.com/1.4.5/_assets/js/index.js"></script>
+	<script src="https://demos.jquerymobile.com/1.4.5/js/jquery.mobile-1.4.5.min.js"></script>
+
+    <script src="js/file_list.js"></script>
+
+    <style>
+        .file-list thead th,
+        .file-list tbody tr:last-child {
+            border-bottom: 1px solid #d6d6d6; /* non-RGBA fallback */
+            border-bottom: 1px solid rgba(0,0,0,.1);
+        }
+        .file-list tbody th,
+        .file-list tbody td {
+            border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+            border-bottom: 1px solid rgba(0,0,0,.05);
+        }
+        .file-list tbody tr:last-child th,
+        .file-list tbody tr:last-child td {
+            border-bottom: 0;
+        }
+        .file-list tbody tr:nth-child(odd) td,
+        .file-list tbody tr:nth-child(odd) th {
+            background-color: #eeeeee; /* non-RGBA fallback  */
+            background-color: rgba(0,0,0,.04);
+        }
+    </style>
+</head>
+<body>
+    
+<div data-role="page" class="jqm-demos">
+
+    <div data-role="header" class="jqm-header">
+        <h2><a tabindex="-1" href="#" data-ajax="false"><img src="img/logo.jpg" alt="logo"></a></h2>
+        <a href="#" class="jqm-navmenu-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-bars ui-nodisc-icon ui-alt-icon ui-btn-left">Menu</a>
+    </div><!-- /header -->
+
+    <div data-role="panel" class="jqm-navmenu-panel" data-position="left" data-display="overlay" data-theme="a">
+        <ul class="jqm-list ui-alt-icon ui-nodisc-icon">
+            <li data-filtertext="form button widget input button submit reset">
+                <a href="change_password.html" data-ajax="false">Change Password</a>
+            </li>
+            <li data-filtertext="form button widget input button submit reset">
+                <a href="open_about.html" data-ajax="false">About</a>
+            </li>
+            <li data-filtertext="demos homepage" data-icon="home">
+                <a href="logout" data-ajax="false">Logout</a>
+            </li>
+        </ul>
+    </div><!-- /panel -->
+
+    <div data-role="main" class="ui-content jqm-content">
+        <a href="submit_file.html" data-ajax="false" class="ui-btn ui-corner-all ui-btn-inline">Submit</a>
+
+        <a href="#" data-theme="b" style="float: right;" id="flesh-button" data-ajax="false" data-role="button" class="">Refresh</a>
+
+        <table data-role="table" id="file-list-table" data-mode="reflow" class="file-list ui-responsive">
+            <thead>
+            <tr>
+                <th>Data Time</th>
+                <th data-priority="2">Cell Type</th>
+                <th data-priority="3">Experiment</th>
+                <th data-priority="4">Plate</th>
+                <th data-priority="4">Well</th>
+                <th data-priority="4">Status</th>
+                <th data-priority="4">Sirna</th>
+            </tr>
+            </thead>
+            <tbody id="file_list">
+            </tbody>
+        </table>
+
+    </div>
+
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="jqm-footer">
+        <p>PI, human cellular biology, novel treatments for disease.</p>
+        <p>Copyright 2020</p>
+    </div><!-- /footer -->
+</div>
+
+</body>
+</html>
