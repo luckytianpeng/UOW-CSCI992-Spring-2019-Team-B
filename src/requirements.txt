@@ -1,8 +1,8 @@
 toolz
 scikit-image
 pandas
-google-cloud-storage
-google-api-python-client
-oauth2client
+# google-cloud-storage
+# google-api-python-client
+# oauth2client
 tensorflow==1.13.1
-apache-beam[gcp]
+# apache-beam[gcp]

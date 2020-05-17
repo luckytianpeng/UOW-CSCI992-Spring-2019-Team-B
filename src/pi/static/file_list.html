@@ -37,6 +37,22 @@
             background-color: #eeeeee; /* non-RGBA fallback  */
             background-color: rgba(0,0,0,.04);
         }
+
+        .channel {
+            width: 128px;
+            height: 128px;
+        }
+
+        .submit_time {
+        }
+
+        .info {
+            width: 20%;
+        }
+
+        .sirna {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -70,13 +86,8 @@
         <table data-role="table" id="file-list-table" data-mode="reflow" class="file-list ui-responsive">
             <thead>
             <tr>
-                <th>Data Time</th>
-                <th data-priority="2">Cell Type</th>
-                <th data-priority="3">Experiment</th>
-                <th data-priority="4">Plate</th>
-                <th data-priority="4">Well</th>
-                <th data-priority="4">Status</th>
-                <th data-priority="4">Sirna</th>
+                <th data-priority="1" class="info">Info</th>
+                <th data-priority="5">Channel</th>
             </tr>
             </thead>
             <tbody id="file_list">

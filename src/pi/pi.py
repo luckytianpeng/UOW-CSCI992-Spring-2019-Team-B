@@ -5,6 +5,7 @@ pt882@uowmail.edu.au
 """
 
 import os
+import sys
 import json
 import socket
 import hashlib
@@ -14,10 +15,20 @@ import datetime
 import pickle
 
 from flask import Flask
-from flask import redirect, request, session, make_response, url_for
+from flask import redirect, request, session, make_response, url_for, send_from_directory
 from flask import current_app, render_template
 from flask_sqlalchemy import SQLAlchemy
+# from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from flask_mail import Mail,Message
+
+import pandas as pd
+import numpy as np
+import tensorflow as tf
+from tensorflow.contrib import predictor
+
+sys.path.append('../')
+import rxrx.io as rio
 
 
 ################################################################################
@@ -44,6 +55,12 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') or ''
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or ''
 
+# uploading files
+app.config['ALLOW_EXTENSIONS'] = set(['png'])
+app.config['UPLOAD_FOLDER'] = 'uploads'
+
+# model
+app.config['MODEL'] = r'D:\_20200313_\_peng\PycharmProjects\csci992\bucket\saved_model\1584067643'
 
 ################################################################################
 # objects:
@@ -68,6 +85,32 @@ class User(db.Model):
         return '<User %>' % self.email
 
 
+class File(db.Model):
+    # table : File
+    id = db.Column(db.Text, primary_key=True)
+    email = db.Column(db.Text, db.ForeignKey('user.email'))
+    cell_type = db.Column(db.Text, nullable=False)
+    experiment_on = db.Column(db.Text, nullable=False)
+    plate_no = db.Column(db.Text, nullable=False)
+    files = db.Column(db.Text, nullable=False)
+    submit_time = db.Column(db.Text, nullable=False)
+    sirna = db.Column(db.Text, nullable=False)
+
+    def __init__(self, id, email, cell_type, experiment_on, plate_no, files, submit_time, sirna):
+        self.id = id
+        self.email = email
+        self.cell_type = cell_type
+        self.experiment_on = experiment_on
+        self.plate_no = plate_no
+        self.files = files
+        self.submit_time = submit_time
+        self.sirna = sirna
+
+    def __repr__(self):
+        return '<File %>' % self.id
+
+# ##################################################################### database
+
 # email:
 mail = Mail(app)
 
@@ -89,6 +132,29 @@ def send_email(to, subject, body):
 
     return thr
 
+# upload files #################################################################
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in app.config['ALLOW_EXTENSIONS']
+# ################################################################# upload files
+
+# neural network model:
+pred = predictor.from_saved_model(app.config['MODEL'])
+
+
+# utilities ####################################################################
+
+# e.g. 2018-10-06T18:35:57.300245
+def isoformat(time):
+    if isinstance(time, datetime.datetime):
+        return time.isoformat()
+    elif isinstance(time, datetime.timedelta):
+        hours = time.seconds // 3600
+        minutes = time.seconds % 3600 // 60
+        seconds = time.seconds % 3600 % 60
+        return 'P%sDT%sH%sM%sS' % (time.days, hours, minutes, seconds)
+
+# #################################################################### utilities
 
 ################################################################################
 # flask route
@@ -96,11 +162,122 @@ def send_email(to, subject, body):
 def before_request():
     # for some key access points, check the status of sign in
     if request.path in ('/file_list.html',
+                        'submit_file.html',
                         '/changepassword',
-                        '/change_password.html'):
+                        '/change_password.html',
+                        '/upload'):
         if 'email' not in session:
             # to the page of 'sign in' if did not sign in
             return redirect('index.html')
+    else:
+        head_tail = os.path.split(request.path)
+        if head_tail[0][1:] == app.config['UPLOAD_FOLDER']:
+            if 'email' in session:
+                return make_response(send_from_directory(head_tail[0][1:], head_tail[1]))
+
+
+TR_FORMAT = \
+    '''<tr>
+        <td class="info">
+            <p class="cell_type">Cell: %s</p>
+            <p class="experiment_on">Exp: %s</p>
+            <p class="plate_no">Plate: %s</p>
+            <p class="submit_time">Submit: %s</p>
+            <p class="sirna">Sirna: %s</p>
+        </td>
+        <td class="channels">%s</td>
+    </tr>'''
+
+
+@app.route('/filelist', methods=['POST'])
+def filelist():
+    # file list info to the front-end
+    file_list = ''
+
+    # all the file which belong to the user
+    record = File.query.filter_by(email=session['email'])
+    for r in record:
+        images = ''
+        for f in r.files.split(','):
+            images += ('<img alt="imgs" src="%s/%s" class="channel" />'
+                       % (app.config['UPLOAD_FOLDER'], f))
+
+        file_list += (
+                TR_FORMAT % (r.cell_type,
+                             r.experiment_on,
+                             r.plate_no,
+                             r.submit_time,
+                             r.sirna,
+                             images
+                             ))
+        file_list += '\n'
+
+    data = {}
+    data['success'] = True
+    data['file_list'] = file_list
+
+    return json.dumps(data, ensure_ascii=False)
+
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    print('--> /upload')
+    if 'POST' == request.method:
+        HEPG2 = request.form.get('radio-choice-h-2a')
+        HVUEC = request.form.get('radio-choice-h-2b')
+        RPE = request.form.get('radio-choice-h-2c')
+        U2OS = request.form.get('radio-choice-h-2d')
+
+        cell_type = ''
+        if HEPG2:
+            cell_type = 'HEPG2'
+        elif HVUEC:
+            cell_type = 'HVUEC'
+        elif RPE:
+            cell_type = 'RPE'
+        else:
+            cell_type = 'U2OS'
+
+        experiment_on = request.form.get('experiment-no')
+        plate_no = request.form.get('plate-no')
+
+        print(HEPG2, HVUEC, RPE, U2OS)
+        print(experiment_on)
+
+        files = []
+        for file in request.files.getlist('files'):
+            if file and allowed_file(file.filename):
+                filename = cell_type + '-' + experiment_on \
+                           + '-Plate' + plate_no \
+                           + '-' + secure_filename(file.filename)
+                print('-->', file.filename, '==>', filename)
+                files.append(filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        # predict:
+        channel_paths = [os.path.join(app.config['UPLOAD_FOLDER'], f) for f in files]
+        tensor = rio.load_images_as_tensor(channel_paths)
+        tensor = np.expand_dims(tensor, axis=0)
+        predictions = pred({'feature': tensor})
+
+        print(predictions)
+
+        id = str(uuid.uuid1())
+        submit_time = isoformat(datetime.datetime.now())
+
+        # save file to database
+        record_file = File(id,
+                           session['email'],
+                           cell_type,
+                           experiment_on,
+                           plate_no,
+                           ','.join(files),
+                           submit_time,
+                           '%d' % predictions['classes'][0])
+        db.session.add(record_file)
+        db.session.commit()
+
+    return redirect('file_list.html')
 
 
 @app.route('/')

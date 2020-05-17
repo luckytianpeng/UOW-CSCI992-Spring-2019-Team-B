@@ -16,4 +16,18 @@ CREATE TABLE IF NOT EXISTS `user` (
 	PRIMARY KEY(`email`)
 );
 
+DROP TABLE IF EXISTS `file`;
+CREATE TABLE IF NOT EXISTS `file` (
+	`id`	TEXT,
+	`email`	TEXT NOT NULL,
+	`cell_type`	TEXT NOT NULL,
+	`experiment_on`	TEXT NOT NULL,
+	`plate_no`	TEXT NOT NULL,
+	`files`	TEXT NOT NULL,
+	`submit_time`	TEXT NOT NULL,
+	`sirna`	TEXT NOT NULL,
+	PRIMARY KEY(`id`),
+	FOREIGN KEY(`email`) REFERENCES `user`(`email`) ON UPDATE CASCADE ON DELETE NO ACTION
+);
+
 COMMIT;

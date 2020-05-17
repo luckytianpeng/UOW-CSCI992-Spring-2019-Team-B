@@ -48,26 +48,29 @@
 
             <fieldset data-role="controlgroup" data-type="horizontal">
                 <legend>Cell Type:</legend>
-                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2a" value="off">
+                <input type="radio" name="radio-choice-h-2a" id="radio-choice-h-2a" value="on">
                 <label for="radio-choice-h-2a">HEPG2</label>
-                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2b" value="off">
+                <input type="radio" name="radio-choice-h-2b" id="radio-choice-h-2b" value="on">
                 <label for="radio-choice-h-2b">HVUEC</label>
-                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2c" value="off">
+                <input type="radio" name="radio-choice-h-2c" id="radio-choice-h-2c" value="on">
                 <label for="radio-choice-h-2c">RPE</label>
-                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2d" value="off">
+                <input type="radio" name="radio-choice-h-2d" id="radio-choice-h-2d" value="on">
                 <label for="radio-choice-h-2d">U2OS</label>
             </fieldset>
 
             <label for="experiment-no">Experiment number:</label>
-            <input type="number" data-clear-btn="false" name="number-1" id="experiment-no" value="1">
+            <input type="number" data-clear-btn="false" name="experiment-no" id="experiment-no" value="1">
 
-            <label id='file-info' style=''>Images: (6 channels * 2 sites = 12 imgs)</label>
+            <label for="plate-no">Plate number:</label>
+            <input type="number" data-clear-btn="false" name="plate-no" id="plate-no" value="1">
+
+            <label id='file-info' style=''>Images: (6 channels)</label>
             <!-- <input tabindex="3" type="file" class="auto-validate" data-allowBlank="false" data-blankText="choose files" name="file" id="file" accept="image/*" multiple />-->
-            <input type="file" id="file" accept="image/*" multiple>
+            <input type="file" name="files" id="files" accept="image/*" multiple>
             <div id="preview"></div>
             <script>
                 var oPreview = document.getElementById("preview");
-                var oUpload = document.getElementById("file");
+                var oUpload = document.getElementById("files");
                 oUpload.onchange = function(){
                     oPreview.innerHTML= "";
 
