@@ -1,4 +1,6 @@
 $(function() {
+$('#pop-button').trigger('click');
+
     $.FormValidator.init('signup-form');
     
     $('#ok-button').bind('click', function() {
