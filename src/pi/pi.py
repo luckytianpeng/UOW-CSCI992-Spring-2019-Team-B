@@ -22,6 +22,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from flask_mail import Mail,Message
 
+import matplotlib
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -47,8 +48,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
         or 'sqlite:///./pi.sqlite3'
 
 # email
-app.config['MAIL_SERVER'] = 'smtp.live.com'
-app.config['MAIL_PORT'] = 25
+app.config['MAIL_SERVER'] = 'smtp.live.com'  # 'smtp.gmail.com'  #
+app.config['MAIL_PORT'] = 25  # 465  #
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 # !!! Do NOT put account and password in source !!!
@@ -93,16 +94,18 @@ class File(db.Model):
     experiment_on = db.Column(db.Text, nullable=False)
     plate_no = db.Column(db.Text, nullable=False)
     files = db.Column(db.Text, nullable=False)
+    rgb_file = db.Column(db.Text, nullable=False)
     submit_time = db.Column(db.Text, nullable=False)
     sirna = db.Column(db.Text, nullable=False)
 
-    def __init__(self, id, email, cell_type, experiment_on, plate_no, files, submit_time, sirna):
+    def __init__(self, id, email, cell_type, experiment_on, plate_no, files, rgb_file, submit_time, sirna):
         self.id = id
         self.email = email
         self.cell_type = cell_type
         self.experiment_on = experiment_on
         self.plate_no = plate_no
         self.files = files
+        self.rgb_file = rgb_file
         self.submit_time = submit_time
         self.sirna = sirna
 
@@ -197,7 +200,11 @@ def filelist():
     # all the file which belong to the user
     record = File.query.filter_by(email=session['email'])
     for r in record:
-        images = ''
+        images = ('<img alt="imgs" src="%s/%s" class="rgb" />'
+                   % (app.config['UPLOAD_FOLDER'], r.rgb_file))
+
+        images = ('<img class="rgb" src="%s/%s" alt="Photo landscape">' % (app.config['UPLOAD_FOLDER'], r.rgb_file) )
+
         for f in r.files.split(','):
             images += ('<img alt="imgs" src="%s/%s" class="channel" />'
                        % (app.config['UPLOAD_FOLDER'], f))
@@ -245,18 +252,28 @@ def upload():
         print(experiment_on)
 
         files = []
+        rgb_file_name = ''
         for file in request.files.getlist('files'):
             if file and allowed_file(file.filename):
                 filename = cell_type + '-' + experiment_on \
                            + '-Plate' + plate_no \
                            + '-' + secure_filename(file.filename)
                 print('-->', file.filename, '==>', filename)
+
+                t = filename.split('_')
+                rgb_file_name = t[0] + '_rgb.png'
+
                 files.append(filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        # predict:
+        # load
         channel_paths = [os.path.join(app.config['UPLOAD_FOLDER'], f) for f in files]
         tensor = rio.load_images_as_tensor(channel_paths)
+        #
+        rgb = rio.convert_tensor_to_rgb(tensor)
+        rgb = np.array(rgb, dtype=np.uint8)
+        matplotlib.image.imsave(os.path.join(app.config['UPLOAD_FOLDER'], rgb_file_name), rgb)
+        # predict:
         tensor = np.expand_dims(tensor, axis=0)
         predictions = pred({'feature': tensor})
 
@@ -272,6 +289,7 @@ def upload():
                            experiment_on,
                            plate_no,
                            ','.join(files),
+                           rgb_file_name,
                            submit_time,
                            '%d' % predictions['classes'][0])
         db.session.add(record_file)
@@ -369,7 +387,7 @@ def signup():
             str(app.config['PORT']) + \
             '/active/' + activecode
 
-        send_email(email, 'Active your account from Rosetta Stone', email_body)
+        send_email(email, 'Active your PI account ', email_body)
 
         data['success'] = True
         data['url'] = 'index.html'
@@ -387,7 +405,7 @@ def active(activecode):
         user.activity = 1
         db.session.commit()
 
-    return redirect('index.html')
+    return redirect('/index.html')
 
 
 @app.route('/changepassword', methods=['POST'])
