@@ -93,17 +93,19 @@ class File(db.Model):
     cell_type = db.Column(db.Text, nullable=False)
     experiment_on = db.Column(db.Text, nullable=False)
     plate_no = db.Column(db.Text, nullable=False)
+    well_type = db.Column(db.Text, nullable=False)
     files = db.Column(db.Text, nullable=False)
     rgb_file = db.Column(db.Text, nullable=False)
     submit_time = db.Column(db.Text, nullable=False)
     sirna = db.Column(db.Text, nullable=False)
 
-    def __init__(self, id, email, cell_type, experiment_on, plate_no, files, rgb_file, submit_time, sirna):
+    def __init__(self, id, email, cell_type, experiment_on, plate_no, well_type, files, rgb_file, submit_time, sirna):
         self.id = id
         self.email = email
         self.cell_type = cell_type
         self.experiment_on = experiment_on
         self.plate_no = plate_no
+        self.well_type = well_type
         self.files = files
         self.rgb_file = rgb_file
         self.submit_time = submit_time
@@ -185,6 +187,7 @@ TR_FORMAT = \
             <p class="cell_type">Cell: %s</p>
             <p class="experiment_on">Exp: %s</p>
             <p class="plate_no">Plate: %s</p>
+            <p class="well_type">Well Type: %s</p>
             <p class="submit_time">Submit: %s</p>
             <p class="sirna">Sirna: %s</p>
         </td>
@@ -213,6 +216,7 @@ def filelist():
                 TR_FORMAT % (r.cell_type,
                              r.experiment_on,
                              r.plate_no,
+                             r.well_type,
                              r.submit_time,
                              r.sirna,
                              images
@@ -247,6 +251,17 @@ def upload():
 
         experiment_on = request.form.get('experiment-no')
         plate_no = request.form.get('plate-no')
+
+        positive_control = request.form.get('well-radio-choice-h-2')
+        negative_control = request.form.get('well-radio-choice-h-2b')
+        treatment = request.form.get('well-radio-choice-h-2c')
+        well_type = ''
+        if positive_control:
+            well_type  = 'positive_control'
+        elif negative_control:
+            well_type = 'negative_control'
+        else:
+            well_type = 'treatment'
 
         print(HEPG2, HVUEC, RPE, U2OS)
         print(experiment_on)
@@ -288,6 +303,7 @@ def upload():
                            cell_type,
                            experiment_on,
                            plate_no,
+                           well_type,
                            ','.join(files),
                            rgb_file_name,
                            submit_time,
