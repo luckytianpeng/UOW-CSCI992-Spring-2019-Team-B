@@ -24,6 +24,7 @@
 import json
 import os
 import sys
+import time
 
 import tensorflow as tf
 
@@ -56,6 +57,8 @@ tf.logging.set_verbosity(tf.logging.INFO)
 # Ref:
 #     https://blog.csdn.net/sinat_36618660/article/details/99778070
 
+start =time.clock()
+
 main(use_tpu=False,  # True,
      tpu=None,  # tpu_grpc,
      gcp_project=None,
@@ -64,19 +67,22 @@ main(use_tpu=False,  # True,
      use_cache=False,
      model_dir=MODEL_DIR,
      train_epochs=3000,
-     train_batch_size=6,  # 8,   #  512,
-     num_train_images=3000,  # 73030,
+     train_batch_size=8,  # 6,  # 8,   #  512,
+     num_train_images=308, # 3000,  # 73030,
      epochs_per_loop=1,
      log_step_count_epochs=1,
      num_cores=num_shards,
      data_format='channels_last',  # main.py line 506, 'For GPU, channels_first will improve performance.'
      transpose_input=True, # assert not transpose_input  # channels_first only for GPU
      tf_precision='float32',  # 'bfloat16', #
-     n_classes=1108,  # 1139
+     n_classes=1139, # 1108,  # 1139
      momentum=0.9,
-     weight_decay=1e-4,
-     base_learning_rate=0.2,
+     weight_decay=0.0001, # 1e-4,
+     base_learning_rate=0.1, # 0.2,
      warmup_epochs=5)
 
 
 # In[ ]:
+
+end = time.clock()
+print('Running time: %s Seconds' % (end-start))

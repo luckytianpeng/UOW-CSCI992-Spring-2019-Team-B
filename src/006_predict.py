@@ -4,6 +4,7 @@
 import json
 import os
 import sys
+import time
 import pprint
 import warnings
 
@@ -31,7 +32,7 @@ metadata_path = '../small_recursion-cellular-image-classification/metadata'
 image_path = '../small_recursion-cellular-image-classification/images'
 # Ref:
 #   https://stackoverflow.com/questions/46098863/how-to-import-an-saved-tensorflow-model-train-using-tf-estimator-and-predict-on
-pred = predictor.from_saved_model('D:/_20200313_/_peng/PycharmProjects/csci992/bucket/saved_model/1584067643')  # ('bucket/saved_model/1589202794')
+pred = predictor.from_saved_model('bucket/saved_model/1593790335')
 
 # t = t.astype('float32')
 # t = t*(1.0/255.0)
@@ -39,6 +40,7 @@ pred = predictor.from_saved_model('D:/_20200313_/_peng/PycharmProjects/csci992/b
 stat = {}
 
 train = pd.read_csv(os.path.join(metadata_path, 'train.csv'))
+start =time.clock()
 for r in range(0, train.shape[0]):
     # t = rio.load_site('train', 'HEPG2-01', 1, 'B05', 1, base_path='../small_recursion-cellular-image-classification/images')  # main.py, line 391,
     t = rio.load_site('train', train.loc[r]['experiment'], 1, train.loc[r]['well'], 1, base_path=image_path)
@@ -55,9 +57,12 @@ for r in range(0, train.shape[0]):
           1, ',',
           train.loc[r]['well'], ',',
           1, ',',
-          train.loc[r]['sirna'], ',',
+          train.loc[r]['sirna'], ',\t\t',
           predictions['classes'][0])
     stat[predictions['classes'][0]] = stat.get(predictions['classes'][0], 0) + 1
+
+end = time.clock()
+print('Running time: %s Seconds' % (end-start))
 
 print(stat)
 #
